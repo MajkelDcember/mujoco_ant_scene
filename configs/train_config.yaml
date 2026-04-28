@@ -1,0 +1,15 @@
+defaults:
+  - _self_
+  - env: null
+  - model: ppo_ant_sbx
+  - train: ant_pinpad
+
+project: ant_pinpad
+sim_name: null
+
+hydra:
+  searchpath:
+    - pkg://scene_deeprl_agents.configs
+    - file://configs
+  run:
+    dir: outputs/${project}/${sim_name}/${now:%Y-%m-%d-%H-%M-%S}

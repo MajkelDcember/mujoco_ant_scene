@@ -9,6 +9,7 @@ Usage:
 """
 
 import os
+import hashlib
 import wandb
 import hydra
 from omegaconf import DictConfig, OmegaConf
@@ -26,9 +27,14 @@ def main(cfg: DictConfig) -> None:
 
     log_path = hydra.core.hydra_config.HydraConfig.get().runtime.output_dir
 
+    # stable 8-char ID derived from sim_name so restarts after preemption resume the same run
+    run_id = hashlib.md5(cfg.sim_name.encode()).hexdigest()[:8]
+
     wandb.init(
         project=cfg.project,
         name=cfg.sim_name,
+        id=run_id,
+        resume="allow",
         config=dict(cfg),
         sync_tensorboard=True,
         dir=log_path,

@@ -1,0 +1,5 @@
+defaults:
+  - default_training
+
+total_timesteps: 30_720_000
+save_freq: 512_000

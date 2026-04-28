@@ -1,0 +1,22 @@
+# virtual environment
+.venv/
+
+# hydra outputs
+outputs/
+
+# submission sweep (cluster-specific)
+submit_sweep.py
+
+# build artifacts
+*.egg-info/
+__pycache__/
+*.pyc
+*.pyo
+.eggs/
+
+# editor
+.vscode/
+.idea/
+
+# wandb local cache
+wandb/

@@ -1,0 +1,13 @@
+[project]
+name = "ant-pinpad"
+version = "0.1.0"
+description = "Ant-pinpad RL training using scene-deeprl-agents"
+requires-python = ">=3.10"
+dependencies = [
+    "mujoco>=3.0.0",
+    "scene-deeprl-agents @ git+https://github.com/jbrea/scene-deeprl-agents",
+    "sbx-rl>=0.23.0",          # SBX JAX PPO (what your coworker recommended)
+    "imageio[ffmpeg]",          # for video rendering
+]
+[tool.setuptools.packages.find]
+include = ["envs*"]

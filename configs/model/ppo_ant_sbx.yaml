@@ -1,0 +1,18 @@
+algo: sbx.PPO
+kwargs:
+  policy: sbx.ppo.policies.PPOPolicy
+  device: cuda
+  batch_size: 2048
+  n_steps: 2048        # ← was 2048, ×4 to compensate for num_env=1
+  learning_rate: 3.0e-04
+  ent_coef: 3.0e-03
+  clip_range: 0.2
+  gamma: 0.99
+  gae_lambda: 0.95
+  max_grad_norm: 0.5
+  vf_coef: 0.5
+  n_epochs: 5
+  seed: 0
+  policy_kwargs:
+    activation_fn: relu
+    net_arch: [512, 512, 512]   # flat shared trunk — SBX only

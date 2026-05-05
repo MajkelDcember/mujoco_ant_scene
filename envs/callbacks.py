@@ -26,8 +26,18 @@ from typing import Optional
 import numpy as np
 
 from stable_baselines3.common.callbacks import BaseCallback
+from stable_baselines3.common.vec_env import VecNormalize
 
 from tasks import ANT_PRETRAINING_TASKS
+
+
+def _wandb_log_at_step(wandb, data: dict, global_step: int) -> None:
+    payload = {"global_step": global_step, **data}
+    run_step = getattr(getattr(wandb, "run", None), "step", None)
+    if run_step is None or global_step >= run_step:
+        wandb.log(payload, step=global_step, commit=True)
+    else:
+        wandb.log(payload)
 
 
 class DiagnosticsCallback(BaseCallback):
@@ -109,8 +119,7 @@ class DiagnosticsCallback(BaseCallback):
                 if val is not None:
                     log_dict[key.replace("train/", "")] = float(val)
 
-            if log_dict:
-                wandb.log(log_dict, step=self.num_timesteps)
+            _wandb_log_at_step(wandb, log_dict, self.num_timesteps)
 
         except Exception as e:
             if not self._wandb_error_reported:
@@ -214,11 +223,17 @@ class VideoCallback(BaseCallback):
         if f0 is not None:
             frames.append(f0)
 
+        def _policy_obs(raw_obs):
+            if isinstance(self.training_env, VecNormalize):
+                raw_obs = np.asarray(raw_obs, dtype=np.float32)[None, ...]
+                return self.training_env.normalize_obs(raw_obs)[0]
+            return raw_obs
+
         done    = False
         step    = 0
         success = False
         while not done:
-            action, _ = self.model.predict(obs, deterministic=True)
+            action, _ = self.model.predict(_policy_obs(obs), deterministic=True)
             action     = np.asarray(action)   # SBX returns JAX array — cast to numpy
             obs, _, terminated, truncated, info = env.step(action)
             done    = terminated or truncated
@@ -237,11 +252,11 @@ class VideoCallback(BaseCallback):
             imageio.mimwrite(str(mp4), frames, fps=self._video_fps, quality=7)
             try:
                 import wandb
-                wandb.log({
+                _wandb_log_at_step(wandb, {
                     "trajectory":      wandb.Video(str(mp4), fps=self._video_fps, format="mp4"),
                     "video_success":   float(success),
                     "video_ep_length": step,
-                }, step=self.num_timesteps)
+                }, self.num_timesteps)
             except Exception:
                 pass
 

@@ -34,6 +34,7 @@ class AntPinpadGym(gym.Env):
         subgoal_reward:            float = 2.0,
         survival_reward:           float = 0.1,
         fall_penalty:              float = 10.0,
+        n_walls:                   int = ANT_CONFIG["n_walls"],
         seed:                      Optional[int] = None,
     ):
         super().__init__()
@@ -48,6 +49,7 @@ class AntPinpadGym(gym.Env):
 
         # Probe obs_dim from a throwaway env
         _kw  = {k: v for k, v in ANT_CONFIG.items() if k != "n_colors"}
+        _kw["n_walls"] = n_walls
         _tmp = AntPinpad(ANT_PRETRAINING_TASKS[0], **_kw, seed=0)
         raw_obs_dim = _tmp.obs_dim
         del _tmp
@@ -62,6 +64,7 @@ class AntPinpadGym(gym.Env):
         )
 
         self._env_kwargs = {k: v for k, v in ANT_CONFIG.items() if k != "n_colors"}
+        self._env_kwargs["n_walls"]           = n_walls
         self._env_kwargs["subgoal_reward"]    = subgoal_reward
         self._env_kwargs["wrong_color_kills"] = False
         self._env: Optional[AntPinpad] = None

@@ -8,6 +8,7 @@ config:
   intrinsic_scale: 12.0
   subgoal_reward: 2.0
   survival_reward: 0.1
+  n_walls: 1
   posture_penalty_coef: 10.0
   posture_penalty_threshold: 0.7
   fall_penalty: 10.0

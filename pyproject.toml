@@ -8,6 +8,8 @@ dependencies = [
     "scene-deeprl-agents @ git+https://github.com/jbrea/scene-deeprl-agents",
     "sbx-rl>=0.23.0",          # SBX JAX PPO (what your coworker recommended)
     "imageio[ffmpeg]",          # for video rendering
+    "seaborn>=0.13.2",
+    "h5py>=3.16.0",
 ]
 [tool.setuptools.packages.find]
 include = ["envs*"]
